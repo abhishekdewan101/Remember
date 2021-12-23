@@ -7,7 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.abhishekdewan.common_ui.widgets.text.RichTextEditor
+import com.abhishekdewan.common_ui.widgets.richtexteditor.RichTextEditor
 import com.abhishekdewan.remember.ui.theme.RememberTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,9 +15,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RememberTheme {
-                RichTextEditor(modifier = Modifier
-                    .background(Color.White)
-                    .fillMaxSize())
+                RichTextEditor(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .fillMaxSize()
+                )
             }
         }
     }
