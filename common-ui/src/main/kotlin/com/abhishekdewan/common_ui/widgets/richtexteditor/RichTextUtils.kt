@@ -16,19 +16,24 @@ class HashTagVisualTransformation : VisualTransformation {
 }
 
 private fun AnnotatedString.annotateHashTags(): AnnotatedString {
-    val words: List<String> = text.split("\\s+".toRegex())
-    val hashTagRegex = Regex(pattern = "(#[A-Za-z0-9-_]+)(?:#[A-Za-z0-9-_]+)*")
     val builder = AnnotatedString.Builder()
-    words.forEach {
-        if (hashTagRegex.matches(it)) {
-            builder.withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
-                append("$it ")
-            }
-        } else {
-            builder.withStyle(style = SpanStyle(color = Color.Black)) {
-                append("$it ")
-            }
+    val hashTagRegex = Regex(pattern = "(#[A-Za-z0-9-_]+)(?:#[A-Za-z0-9-_]+)*")
+    val matches = hashTagRegex.findAll(text)
+    var startIndex = 0
+    matches.forEach {
+        builder.append(
+            text.substring(
+                IntRange(
+                    start = startIndex,
+                    endInclusive = it.range.first - 1
+                )
+            )
+        )
+        builder.withStyle(style = SpanStyle(color = Color.Yellow, fontWeight = FontWeight.Bold)) {
+            append(text.substring(it.range))
         }
+        startIndex = it.range.last + 1
     }
+    builder.append(text.substring(IntRange(start = startIndex, endInclusive = text.length - 1)))
     return builder.toAnnotatedString()
 }

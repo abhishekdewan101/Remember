@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
             RememberTheme {
                 RichTextEditor(
                     modifier = Modifier
-                        .background(Color.White)
+                        .background(Color.Black)
                         .fillMaxSize()
                 )
             }
