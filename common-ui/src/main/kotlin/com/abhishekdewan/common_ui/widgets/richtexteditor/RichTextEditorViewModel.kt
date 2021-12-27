@@ -32,25 +32,18 @@ class RichTextEditorViewModel {
     val textFieldValue: StateFlow<TextFieldValue> = _textFieldValue
 
     fun updateTextFieldValue(newValue: TextFieldValue) {
-        _textFieldValue.value =
-            newValue.copy(annotatedString = createAnnotatedString(text = newValue.text))
+        _textFieldValue.value = newValue.copy(annotatedString = createAnnotatedString(text = newValue.text))
     }
 
     fun processEditType(type: EditType) {
         val selection = _textFieldValue.value.selection
-        val edit = Edit(
-            range = IntRange(start = selection.start, endInclusive = selection.end),
-            type = type
-        )
+        val edit = Edit(range = IntRange(start = selection.start, endInclusive = selection.end), type = type)
         if (edits.contains(edit)) {
             edits.remove(edit)
         } else {
             edits.add(edit)
         }
-        _textFieldValue.value =
-            _textFieldValue.value.copy(
-                annotatedString = createAnnotatedString(text = _textFieldValue.value.text)
-            )
+        _textFieldValue.value = _textFieldValue.value.copy(annotatedString = createAnnotatedString(text = _textFieldValue.value.text))
     }
 
     private fun createAnnotatedString(text: String): AnnotatedString = when (edits.size) {
@@ -67,7 +60,12 @@ class RichTextEditorViewModel {
             builder.append(text.subSequence(startIndex = startIndex, endIndex = edit.range.first))
 
             builder.withStyle(style = getStyle(style = Style.BOLD)) {
-                append(text.substring(startIndex = edit.range.first, endIndex = edit.range.last))
+                append(
+                    text.substring(
+                        startIndex = edit.range.first,
+                        endIndex = edit.range.last
+                    )
+                )
             }
             startIndex = edit.range.last
         }
