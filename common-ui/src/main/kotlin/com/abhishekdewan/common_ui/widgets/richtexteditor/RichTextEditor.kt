@@ -12,49 +12,37 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults.textFieldColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.abhishekdewan.common_ui.widgets.richtexteditor.EditorAction.BOLD
 
 @Composable
 fun RichTextEditor(modifier: Modifier = Modifier) {
-    var textFieldState by remember { mutableStateOf(TextFieldValue(text = "")) }
-    var selectionRange by remember { mutableStateOf(IntRange(start = 0, endInclusive = 0)) }
-    var editorAction by remember { mutableStateOf(EditorAction.NONE) }
+    val viewModel = remember { RichTextEditorViewModel() }
+    val textFieldValue = viewModel.textFieldValue.collectAsState()
     Column(modifier = Modifier.fillMaxSize()) {
-        if (textFieldState.selection.length > 0) {
+        if (textFieldValue.value.selection.length > 0) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
             ) {
                 Button(onClick = {
-                    val start = textFieldState.selection.start
-                    val end = textFieldState.selection.start + textFieldState.selection.length
-                    selectionRange = IntRange(start = start, endInclusive = end)
-                    editorAction = BOLD
+                    viewModel.processEditType(EditType.BOLD)
                 }) {
                     Text("Bold")
                 }
             }
         }
         TextField(
-            value = textFieldState,
-            onValueChange = { textFieldState = it },
+            value = textFieldValue.value,
+            onValueChange = viewModel::updateTextFieldValue,
             modifier = modifier.verticalScroll(
                 rememberScrollState()
             ),
-            colors = textFieldColors(textColor = Color.White),
-            visualTransformation = RichTextVisualTransformation(
-                selectedRange = selectionRange,
-                editorAction = editorAction
-            )
+            colors = textFieldColors(textColor = Color.White)
         )
     }
 }
