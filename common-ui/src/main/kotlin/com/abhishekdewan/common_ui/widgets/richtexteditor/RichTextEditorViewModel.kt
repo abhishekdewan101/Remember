@@ -30,19 +30,67 @@ class RichTextEditorViewModel {
     val textFieldValue: StateFlow<TextFieldValue> = _textFieldValue
 
     fun updateTextFieldValue(newValue: TextFieldValue) {
-        _textFieldValue.value = newValue.copy(annotatedString = createAnnotatedString(text = newValue.text))
+        _textFieldValue.value =
+            newValue.copy(annotatedString = createAnnotatedString(text = newValue.text))
     }
 
     fun processEditType(style: Style) {
         val selection = _textFieldValue.value.selection
-        val edit = Edit(range = IntRange(start = selection.start, endInclusive = selection.end), style = style)
+        val edit = Edit(
+            range = IntRange(start = selection.start, endInclusive = selection.end),
+            style = style
+        )
+        processEdits(edit)
+        _textFieldValue.value =
+            _textFieldValue.value.copy(annotatedString = createAnnotatedString(text = _textFieldValue.value.text))
+    }
+
+    private fun processEdits(edit: Edit) {
+        // if edit is already contained then remove it as is
         if (edits.contains(edit)) {
             edits.remove(edit)
-        } else {
-            // TODO: We shouldn't just add everything. We need to figure out if the new edit is overlapping ranges and type and then break them out.
-            edits.add(edit)
+            return
         }
-        _textFieldValue.value = _textFieldValue.value.copy(annotatedString = createAnnotatedString(text = _textFieldValue.value.text))
+
+        if (edits.isEmpty()) {
+            edits.add(edit)
+            return
+        }
+
+        val processedList = mutableListOf<Edit>()
+        processedList.addAll(edits.filter { it.style != edit.style })
+
+        val sortedList = edits.filter { it.style == edit.style }.toMutableList()
+        if (sortedList.isEmpty()) {
+            edits.add(edit)
+            return
+        }
+
+        var merged = false
+        for (e in sortedList) {
+            if (edit.range.last <= e.range.first || edit.range.first >= e.range.last) {
+                processedList.add(e)
+            } else {
+                merged = true
+                processedList.add(
+                    Edit(
+                        style = edit.style,
+                        range = IntRange(
+                            start = e.range.first.coerceAtMost(edit.range.first),
+                            endInclusive = e.range.last.coerceAtLeast(edit.range.last)
+                        )
+                    )
+                )
+            }
+        }
+
+        if (!merged) {
+            processedList.add(edit)
+        }
+
+        edits.clear()
+        edits.addAll(processedList)
+        println("Edits - $edits")
     }
 
     private fun createAnnotatedString(text: String): AnnotatedString = when (edits.size) {
@@ -51,11 +99,15 @@ class RichTextEditorViewModel {
     }
 
     private fun processEditsOnString(text: AnnotatedString): AnnotatedString {
-
         val spanStyles = text.spanStyles.toMutableList()
         for (edit in edits) {
-            println("Processing Edit - $edit")
-            spanStyles.add(AnnotatedString.Range(getStyle(style = edit.style), start = edit.range.first, end = edit.range.last))
+            spanStyles.add(
+                AnnotatedString.Range(
+                    getStyle(style = edit.style),
+                    start = edit.range.first,
+                    end = edit.range.last
+                )
+            )
         }
 
         return AnnotatedString(text = text.text, spanStyles = spanStyles)
