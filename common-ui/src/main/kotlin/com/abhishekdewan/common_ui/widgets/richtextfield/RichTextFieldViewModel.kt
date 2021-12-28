@@ -1,13 +1,9 @@
 package com.abhishekdewan.common_ui.widgets.richtextfield
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -16,6 +12,9 @@ enum class Style {
     BOLD,
     ITALICS,
     HEADING,
+    TITLE,
+    SUBHEADING,
+    BODY
 }
 
 data class Edit(val range: IntRange, val style: Style)
@@ -140,9 +139,12 @@ class RickTextFieldViewModel {
     }
 
     private fun getStyle(style: Style): SpanStyle = when (style) {
-        Style.HASHTAG -> SpanStyle(color = Color.Yellow, fontWeight = FontWeight.Bold)
-        Style.BOLD -> SpanStyle(color = Color.White, fontWeight = FontWeight.Bold)
-        Style.HEADING -> SpanStyle(fontSize = 32.sp)
-        Style.ITALICS -> SpanStyle(fontStyle = FontStyle.Italic)
+        Style.HASHTAG -> RichTextFieldStyles.HashTags.toSpanStyle()
+        Style.BOLD -> RichTextFieldStyles.Bold.toSpanStyle()
+        Style.HEADING -> RichTextFieldStyles.Heading.toSpanStyle()
+        Style.ITALICS -> RichTextFieldStyles.Italics.toSpanStyle()
+        Style.TITLE -> RichTextFieldStyles.Title.toSpanStyle()
+        Style.SUBHEADING -> RichTextFieldStyles.SubHeading.toSpanStyle()
+        Style.BODY -> RichTextFieldStyles.Body.toSpanStyle()
     }
 }

@@ -54,8 +54,24 @@ fun RichTextField(modifier: Modifier = Modifier) {
                 IconButton(onClick = { viewModel.processEditType(Style.ITALICS) }) {
                     Text(text = "I", style = TextStyle(color = Color.White, fontWeight = FontWeight.Bold, fontStyle = FontStyle.Italic))
                 }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(Color.DarkGray)
+            ) {
                 IconButton(onClick = { viewModel.processEditType(Style.HEADING) }, modifier = Modifier.size(64.dp)) {
                     Text(text = "HEADING", style = TextStyle(color = Color.White, fontWeight = FontWeight.Bold))
+                }
+                IconButton(onClick = { viewModel.processEditType(Style.TITLE) }, modifier = Modifier.size(64.dp)) {
+                    Text(text = "TITLE", style = TextStyle(color = Color.White, fontWeight = FontWeight.Bold))
+                }
+                IconButton(onClick = { viewModel.processEditType(Style.SUBHEADING) }, modifier = Modifier.size(128.dp)) {
+                    Text(text = "SUBHEADING", style = TextStyle(color = Color.White, fontWeight = FontWeight.Bold))
+                }
+                IconButton(onClick = { viewModel.processEditType(Style.BODY) }, modifier = Modifier.size(64.dp)) {
+                    Text(text = "BODY", style = TextStyle(color = Color.White, fontWeight = FontWeight.Bold))
                 }
             }
         }
