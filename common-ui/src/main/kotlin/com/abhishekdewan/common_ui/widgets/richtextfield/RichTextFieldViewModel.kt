@@ -1,8 +1,9 @@
-package com.abhishekdewan.common_ui.widgets.richtexteditor
+package com.abhishekdewan.common_ui.widgets.richtextfield
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 enum class Style {
     HASHTAG,
     BOLD,
+    ITALICS,
     HEADING,
 }
 
@@ -20,18 +22,22 @@ data class Edit(val range: IntRange, val style: Style)
 
 val HASHTAG_REGEX_PATTERN = Regex(pattern = "(#[A-Za-z0-9-_]+)(?:#[A-Za-z0-9-_]+)*")
 
-class RichTextEditorViewModel {
+class RickTextFieldViewModel {
     private val edits = mutableListOf<Edit>()
     private var _textFieldValue = MutableStateFlow(
         TextFieldValue(
             annotatedString = createAnnotatedString(text = "")
         )
     )
+
+    private var _isSelectionEnabled = MutableStateFlow(false)
+    val isSelectionEnabled: StateFlow<Boolean> = _isSelectionEnabled
+
     val textFieldValue: StateFlow<TextFieldValue> = _textFieldValue
 
     fun updateTextFieldValue(newValue: TextFieldValue) {
-        _textFieldValue.value =
-            newValue.copy(annotatedString = createAnnotatedString(text = newValue.text))
+        _textFieldValue.value = newValue.copy(annotatedString = createAnnotatedString(text = newValue.text))
+        _isSelectionEnabled.value = newValue.selection.length >= 1
     }
 
     fun processEditType(style: Style) {
@@ -137,5 +143,6 @@ class RichTextEditorViewModel {
         Style.HASHTAG -> SpanStyle(color = Color.Yellow, fontWeight = FontWeight.Bold)
         Style.BOLD -> SpanStyle(color = Color.White, fontWeight = FontWeight.Bold)
         Style.HEADING -> SpanStyle(fontSize = 32.sp)
+        Style.ITALICS -> SpanStyle(fontStyle = FontStyle.Italic)
     }
 }
