@@ -30,7 +30,7 @@ fun RichTextEditor(modifier: Modifier = Modifier) {
                     .height(100.dp)
             ) {
                 Button(onClick = {
-                    viewModel.processEditType(EditType.BOLD)
+                    viewModel.processEditType(Style.BOLD)
                 }) {
                     Text("Bold")
                 }

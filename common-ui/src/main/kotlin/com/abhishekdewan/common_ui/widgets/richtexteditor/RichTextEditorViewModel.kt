@@ -9,16 +9,12 @@ import androidx.compose.ui.text.withStyle
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-enum class EditType {
-    BOLD
-}
-
 enum class Style {
     HASHTAG,
     BOLD
 }
 
-data class Edit(val range: IntRange, val type: EditType)
+data class Edit(val range: IntRange, val style: Style)
 
 val HASHTAG_REGEX_PATTERN = Regex(pattern = "(#[A-Za-z0-9-_]+)(?:#[A-Za-z0-9-_]+)*")
 
@@ -35,12 +31,13 @@ class RichTextEditorViewModel {
         _textFieldValue.value = newValue.copy(annotatedString = createAnnotatedString(text = newValue.text))
     }
 
-    fun processEditType(type: EditType) {
+    fun processEditType(style: Style) {
         val selection = _textFieldValue.value.selection
-        val edit = Edit(range = IntRange(start = selection.start, endInclusive = selection.end), type = type)
+        val edit = Edit(range = IntRange(start = selection.start, endInclusive = selection.end), style = style)
         if (edits.contains(edit)) {
             edits.remove(edit)
         } else {
+            // TODO: We shouldn't just add everything. We need to figure out if the new edit is overlapping ranges and type and then break them out.
             edits.add(edit)
         }
         _textFieldValue.value = _textFieldValue.value.copy(annotatedString = createAnnotatedString(text = _textFieldValue.value.text))
@@ -52,27 +49,14 @@ class RichTextEditorViewModel {
     }
 
     private fun processEditsOnString(text: AnnotatedString): AnnotatedString {
-        val builder = AnnotatedString.Builder()
-        var startIndex = 0
-        for (edit in edits) {
-            println("Process Edit - $edit")
-            // append everything before match
-            builder.append(text.subSequence(startIndex = startIndex, endIndex = edit.range.first))
 
-            builder.withStyle(style = getStyle(style = Style.BOLD)) {
-                append(
-                    text.substring(
-                        startIndex = edit.range.first,
-                        endIndex = edit.range.last
-                    )
-                )
-            }
-            startIndex = edit.range.last
+        val spanStyles = text.spanStyles.toMutableList()
+        for (edit in edits) {
+            println("Processing Edit - $edit")
+            spanStyles.add(AnnotatedString.Range(getStyle(style = edit.style), start = edit.range.first, end = edit.range.last))
         }
-        if (startIndex <= text.length - 1) {
-            builder.append(text.subSequence(startIndex = startIndex, endIndex = text.length))
-        }
-        return builder.toAnnotatedString()
+
+        return AnnotatedString(text = text.text, spanStyles = spanStyles)
     }
 
     private fun processVisualAnnotationsOnString(text: String): AnnotatedString {
