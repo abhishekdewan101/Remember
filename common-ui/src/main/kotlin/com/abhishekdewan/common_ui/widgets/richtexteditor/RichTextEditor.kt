@@ -29,10 +29,11 @@ fun RichTextEditor(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .height(100.dp)
             ) {
-                Button(onClick = {
-                    viewModel.processEditType(Style.BOLD)
-                }) {
+                Button(onClick = { viewModel.processEditType(Style.BOLD) }) {
                     Text("Bold")
+                }
+                Button(onClick = { viewModel.processEditType(Style.HEADING) }) {
+                    Text(text = "Heading")
                 }
             }
         }

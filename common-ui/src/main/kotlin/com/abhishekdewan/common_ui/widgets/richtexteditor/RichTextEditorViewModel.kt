@@ -6,12 +6,14 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 enum class Style {
     HASHTAG,
-    BOLD
+    BOLD,
+    HEADING,
 }
 
 data class Edit(val range: IntRange, val style: Style)
@@ -82,5 +84,6 @@ class RichTextEditorViewModel {
     private fun getStyle(style: Style): SpanStyle = when (style) {
         Style.HASHTAG -> SpanStyle(color = Color.Yellow, fontWeight = FontWeight.Bold)
         Style.BOLD -> SpanStyle(color = Color.White, fontWeight = FontWeight.Bold)
+        Style.HEADING -> SpanStyle(fontSize = 32.sp)
     }
 }
