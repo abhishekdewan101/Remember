@@ -5,15 +5,19 @@ coroutines = "1.5.2"
 compose = "1.0.1"
 activity-compose = "1.3.1"
 
+accompanist-insets = "0.21.5-rc"
+
 [libraries]
 
 android-pluginGradle = "com.android.tools.build:gradle:7.0.4"
 
-compose-ui = {module = "androidx.compose.ui:ui", version.ref = "compose"}
-compose-material = {module = "androidx.compose.material:material", version.ref = "compose"}
-compose-preview-tooling = {module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose"}
-compose-activity = {module = "androidx.activity:activity-compose", version.ref="activity-compose"}
-compose-ui-tooling = {module = "androidx.compose.ui:ui-tooling", version.ref= "compose"}
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+compose-preview-tooling = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+
+accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist-insets" }
 
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
