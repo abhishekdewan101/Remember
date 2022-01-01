@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
-import com.abhishekdewan.common_ui.widgets.richtextfield.RichTextField
+import com.abhishekdewan.common_ui.widgets.texteditor.TextEditor
 import com.abhishekdewan.remember.ui.theme.RememberTheme
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             RememberTheme {
                 ProvideWindowInsets {
-                    RichTextField(
+                    TextEditor(
                         modifier = Modifier
                             .background(Color.Black)
                             .fillMaxSize()
