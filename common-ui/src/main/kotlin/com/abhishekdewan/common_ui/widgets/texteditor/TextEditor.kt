@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
@@ -39,12 +40,14 @@ fun TextEditor(modifier: Modifier = Modifier) {
 
 val HASHTAG_REGEX_PATTERN = Regex(pattern = "(#[A-Za-z0-9-_]+)(?:#[A-Za-z0-9-_]+)*")
 val BOLD_REGEX_PATTERN = Regex(pattern = "(\\*{2})(\\s*\\b)([^\\*]*)(\\b\\s*)(\\*{2})")
+val ITALICS_REGEX_PATTERN = Regex(pattern = "(\\~{2})(\\s*\\b)([^\\*]*)(\\b\\s*)(\\~{2})")
 val HEADING_REGEX_PATTERN = Regex(pattern = "\\#{1,4}\\s([^\\#]*)\\s\\#{1,4}(?=\\n)")
 
 class TextEditorVisualTransformer : VisualTransformation {
 
     override fun filter(text: AnnotatedString): TransformedText {
         var transformation = transformBold(text = text)
+        transformation = transformItalics(text = transformation.annotatedString)
         transformation = transformHashtags(text = transformation.annotatedString)
         transformation = transformHeading(text = transformation.annotatedString)
 
@@ -77,6 +80,30 @@ fun transformHeading(text: AnnotatedString): Transformation {
             builder.addStyle(
                 style = SpanStyle(color = Color.Gray, baselineShift = BaselineShift.Superscript, fontSize = sizeList[headingLevel - 1] / 4),
                 matchRange.last - headingLevel + 1,
+                matchRange.last + 1
+            )
+        }
+        Transformation(annotatedString = builder.toAnnotatedString(), offsetMapping = OffsetMapping.Identity)
+    } else {
+        Transformation(annotatedString = text, offsetMapping = OffsetMapping.Identity)
+    }
+}
+
+fun transformItalics(text: AnnotatedString): Transformation {
+    val matches = ITALICS_REGEX_PATTERN.findAll(text.text)
+    return if (matches.count() > 0) {
+        val builder = AnnotatedString.Builder(text)
+        for (match in matches) {
+            val matchRange = match.range
+            builder.addStyle(
+                style = SpanStyle(color = Color.Gray, baselineShift = BaselineShift.Superscript, fontSize = 10.sp),
+                matchRange.first,
+                matchRange.first + 2
+            )
+            builder.addStyle(style = SpanStyle(fontStyle = FontStyle.Italic), matchRange.first + 2, matchRange.last - 1)
+            builder.addStyle(
+                style = SpanStyle(color = Color.Gray, baselineShift = BaselineShift.Superscript, fontSize = 10.sp),
+                matchRange.last - 1,
                 matchRange.last + 1
             )
         }
